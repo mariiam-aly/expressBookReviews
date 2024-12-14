@@ -20,6 +20,7 @@ const doesExist = (username) => {
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
+console.log(req.body)
     // Check if both username and password are provided
     if (username && password) {
         // Check if the user does not already exist
