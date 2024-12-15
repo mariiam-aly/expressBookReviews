@@ -44,7 +44,7 @@ public_users.get('/',function (req, res) {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-const bookByIsbn=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.isbn==req.params.isbn));
+const bookByIsbn=books[req.params.isbn]
 
   return res.status(300).json(JSON.stringify(bookByIsbn));
  });
@@ -63,8 +63,8 @@ const bookByTitle=Object.fromEntries(Object.entries(books).filter(([key,value]) 
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-const bookByIsbn=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.isbn==req.params.isbn));
-  return res.status(300).json(JSON.stringify((Object.values(bookByIsbn)[0].reviews)));
+const bookByIsbn=books[req.params.isbn];
+  return res.status(300).json(JSON.stringify((bookByIsbn).reviews));
 });
 
 module.exports.general = public_users;

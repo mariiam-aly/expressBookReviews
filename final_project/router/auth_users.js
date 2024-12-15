@@ -46,8 +46,18 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+const bookByIsbn=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.isbn==req.params.isbn));
+let reviews=Object.values(bookByIsbn)[0].reviews
+const reviewExists=Object.fromEntries(Object.entries(reviews).filter(([key]) => req.session.authorization.username==key));
+if(reviewExists.length>0){
+    Object.values(reviewExists)[0]= req.body.review
+}
+else{
+    const newReview={name:req.session.authorization.username, review:req.body.review}
+reviews={...reviews,...newReview }
+}
+  return res.status(300).json(JSON.stringify((Object.values(bookByIsbn)[0].reviews)));
+
 });
 
 module.exports.authenticated = regd_users;
