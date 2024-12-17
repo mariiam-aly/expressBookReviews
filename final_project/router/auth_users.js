@@ -5,9 +5,6 @@ const regd_users = express.Router();
 
 let users = [];
 
-const isValid = (username)=>{ //returns boolean
-//write code to check is the username is valid
-}
 
 const authenticatedUser = (username,password)=>{ //returns boolean
     let validusers = users.filter((user) => {
@@ -45,20 +42,35 @@ regd_users.post("/login", (req,res) => {
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-const bookByIsbn=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.isbn==req.params.isbn));
-let reviews=Object.values(bookByIsbn)[0].reviews
-const reviewExists=Object.fromEntries(Object.entries(reviews).filter(([key]) => req.session.authorization.username==key));
-if(reviewExists.length>0){
-    Object.values(reviewExists)[0]= req.body.review
-}
-else{
-    const newReview={name:req.session.authorization.username, review:req.body.review}
-reviews={...reviews,...newReview }
-}
-  return res.status(300).json(JSON.stringify((Object.values(bookByIsbn)[0].reviews)));
-
-});
+regd_users.put("/auth/review/:isbn", (req, res) => { const isbn = req.params.isbn;
+    const review = req.body.review;
+    const username = req.body.username;
+   
+    if (!books[isbn]) {
+      return res.status(404).send("Book not found");
+    }
+   
+    // Initialize reviews object if it doesn't exist
+    if (!books[isbn].reviews) {
+      books[isbn].reviews = {};
+    }
+   
+    // Add or update the review
+    books[isbn].reviews[username] =  review ;
+   
+    res.status(200).send(books[isbn].reviews);
+  });
+  
+  regd_users.delete("/auth/review/:isbn", (req, res) => {
+      const isbn = req.params.isbn;
+    const newBook=Object.fromEntries(Object.entries(books[isbn].reviews).filter(([key]) =>key!==req.body.username));
+    console.log(newBook)
+    books[isbn].reviews =  newBook ;
+  
+    res.status(200).send(`review deleted: ${JSON.stringify(books[isbn].reviews)}`);
+  
+  })
+  
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;

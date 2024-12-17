@@ -37,29 +37,33 @@ console.log(req.body)
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json(JSON.stringify(books));
-});
-
+public_users.get('/',async function (req, res) {
+    await new Promise((resolve, reject)=>{
+        resolve(res.send(books));
+    })
+  });
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn',async function (req, res) {
 const bookByIsbn=books[req.params.isbn]
-
-  return res.status(300).json(JSON.stringify(bookByIsbn));
+await new Promise((resolve, reject)=>{
+    resolve(res.status(300).json(JSON.stringify(bookByIsbn)));
+})
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author',async function (req, res) {
 const bookByAuthor=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.author==req.params.author));
-  return res.status(300).json(JSON.stringify(bookByAuthor));
+  await new Promise((resolve, reject)=>{
+    resolve(res.status(300).json(JSON.stringify(bookByAuthor)));
+})
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title',async function (req, res) {
 const bookByTitle=Object.fromEntries(Object.entries(books).filter(([key,value]) => value.title==req.params.title));
-  return res.status(300).json(JSON.stringify(bookByTitle));
-});
+await new Promise((resolve, reject)=>{
+    resolve(res.status(300).json(JSON.stringify(bookByTitle)));
+})});
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
